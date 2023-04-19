@@ -1,0 +1,184 @@
+---
+title: "Untitled"
+author: "Jan Luca Schnatz"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+dependecies <- read_csv(here("Mastering_Shiny/dependecies.csv")) %>% pull(packages)
+pacman::p_load(char = dependecies)
+
+```
+
+```{r}
+server <- function(input, output, session) {}
+```
+
+# Inputs
+
+## Common Structure
+
+- `inputId`: id to connect front end with backend
+  - example: ui: "name" -> server: input$name
+  - must be a single string with only letters, numbers and underscores
+  - must be unique
+- `label`: Human-readable label for the control
+- `value`: set default value (if possible)
+
+```{r}
+# Example:
+sliderInput(
+  inputId = "min",
+  label = "Limit (minimum)",
+  value = 50,
+  min = 0,
+  max = 100
+)
+```
+
+## Free Text
+
+- `textInput()`: small amounts of text
+- `passwordInput()`: passwords
+- `textAreaInput()`: paragraphs
+
+```{r}
+ui <- fluidPage(
+  textInput("name", "What's your name?"),
+  passwordInput("password", "What's your password?"),
+  textAreaInput("story", "Tell me about yourself", rows = 3)
+)
+
+ui
+
+```
+
+## Numeric Inputs
+
+- `numericInput()`: numeric constrained text box
+- `sliderInput()`: slider
+
+```{r}
+ui <- fluidPage(
+  numericInput("num", "Number one", value = 0, min = 0, max = 100),
+  sliderInput("num2", "Number two", value = 50, min = 0, max = 100),
+  sliderInput("rng", "Range", value = c(10, 20), min = 0, max = 100)
+)
+
+shinyApp(ui, server)
+
+```
+
+## Dates
+
+- `dateInput()`: single date
+- `dateRangeInput()`: date range
+
+```{r}
+
+ui <- fluidPage(
+  dateInput("dob", "When were you born?", language = "de"),
+  dateRangeInput("holiday", "When do you want to go on vacation next?", language = "de")
+)
+
+shinyApp(ui, server)
+
+```
+
+## Limited Choices
+
+- `selectInput()`: drop-down MC (multiple possible)
+- `radioButtons()`: small buttons MC (multiple impossible)
+- `checkboxGroupInput()`: checkbox (multiple possible)
+- `checkboxInput()`: single checbox (yes/no)
+
+```{r}
+letters_sample <- letters[1:5]
+
+ui <- fluidPage(
+  selectInput(
+    inputId = "select",
+    label = "This is the selectInput",
+    choices = letters_sample,
+    multiple = TRUE # multiple selection
+    ),
+  radioButtons(
+    inputId = "radio",
+    label = "This is the radioButton",
+    choices = letters_sample
+  ),
+  checkboxGroupInput(
+    inputId = "checkboxgroup",
+    label = "This is a checkboxGroupInput",
+    choices = letters_sample
+  ),
+  checkboxInput(
+    inputId = "checkbox",
+    label = "Shutdown?"
+  )
+)
+
+shinyApp(ui, server)
+
+```
+
+## File uploads
+
+- `fileInput()`: allow user to upload file
+
+```{r}
+ui <- fluidPage(
+  fileInput("upload", NULL)
+)
+ui
+```
+
+## Action buttons
+
+- `actionButton()`
+- `actionLink()`
+
+Action buttons can be paired with `observeEvent()` or `eventReactive()` in the server function.
+
+```{r}
+
+ui <- fluidPage(
+  actionButton("click", "Click me!"),
+  actionButton("drink", "Drink me!", icon = icon("cocktail")),
+  actionLink("link", label = "google.com")
+)
+ui
+
+```
+
+## Exercices
+
+1. When space is at a premium, it’s useful to label text boxes using a placeholder that appears inside the text entry area. How do you call textInput() to generate the UI below?
+
+```{r}
+textInput("text", label = NULL, placeholder = "Your name")
+```
+
+2. Carefully read the documentation for sliderInput() to figure out how to create a date slider, as shown below.
+
+```{r}
+ui <- fluidPage(sliderInput("slider", "When should we deliver?",
+            min = as.Date("2020-09-16", "%Y-%m-%d"), 
+            max = as.Date("2020-09-23", "%Y-%m-%d"), 
+            value = as.Date("2020-09-17", "%Y-%m-%d"),
+            timeFormat = "%Y-%m-%d"))
+
+shinyApp(ui, server)
+```
+
+# Outputs
+
+## Text
+## Tables
+## Plots
+## Downloads
+## Exercices
